@@ -95,25 +95,10 @@ include(cmake/dependencies.cmake)
 add_library(euler1d_lib STATIC
     # Config
     src/config/parser.cpp
-    # EOS
-    src/eos/eos.cpp
     # Mesh
     src/mesh/mesh.cpp
-    # Flux
-    src/flux/llf.cpp
-    src/flux/rusanov.cpp
-    src/flux/hll.cpp
-    src/flux/hllc.cpp
-    # Reconstruction
-    src/reconstruction/limiter.cpp
-    src/reconstruction/muscl.cpp
-    # Boundary
-    src/boundary/boundary.cpp
     # Initial conditions
     src/initial/initial_condition.cpp
-    # Time integration
-    src/time/explicit_euler.cpp
-    src/time/ssprk3.cpp
     # Solver
     src/solver/solver.cpp
     src/solver/factory.cpp
