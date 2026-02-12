@@ -5,6 +5,7 @@
 
 #include "euler1d/solver/solver.hpp"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <format>
 #include <print>
@@ -203,6 +204,9 @@ void Solver::run() {
     std::println("  Final time: {}, CFL: {}", t_final, config_.time.cfl);
     std::println("  Order: {}", order_);
 
+    // Start timing
+    const auto start_time = std::chrono::high_resolution_clock::now();
+
     // Define RHS function for time integrator
     auto rhs_func = [this](std::span<const ConservativeVars> U_in, std::span<ConservativeVars> dU_out) {
         // Need a mutable copy for boundary application
@@ -236,7 +240,18 @@ void Solver::run() {
         }
     }
 
+    // End timing and compute performance metrics
+    const auto end_time = std::chrono::high_resolution_clock::now();
+    const auto elapsed = std::chrono::duration<double>(end_time - start_time);
+    const double wall_time = elapsed.count();
+    const double cells_per_sec = static_cast<double>(step) * static_cast<double>(mesh_.num_cells()) / wall_time;
+    const double steps_per_sec = static_cast<double>(step) / wall_time;
+
     std::println("Simulation complete: {} steps, final time = {:.6f}", step, time_);
+    std::println("Performance:");
+    std::println("  Wall time:    {:.4f} s", wall_time);
+    std::println("  Steps/sec:    {:.2f}", steps_per_sec);
+    std::println("  Mcells/sec:   {:.2f}", cells_per_sec / 1.0e6);
 }
 
 }  // namespace euler1d
