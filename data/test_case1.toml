@@ -1,0 +1,44 @@
+# Toro test case 1 (shock tube with sonic point)
+[simulation]
+equations = "euler_1d"
+test_name = "test_case1"
+
+[mesh]
+xmin = 0.0
+xmax = 1.0
+num_cells = 1000
+
+[time]
+cfl = 0.5
+final_time = 0.2
+time_integrator = "ssprk3"
+
+[numerics]
+order = 1
+flux = "llf"
+limiter = "vanleer"
+
+[eos]
+model = "ideal_gas"
+gamma = 1.4
+
+[boundary_conditions]
+left = "transmissive"
+right = "transmissive"
+
+[initial_condition]
+type = "piecewise_constant"
+
+[[initial_condition.region]]
+x_left = 0.0
+x_right = 0.3
+rho = 1.0
+u = 0.75
+p = 1.0
+
+[[initial_condition.region]]
+x_left = 0.3
+x_right = 1.0
+rho = 0.125
+u = 0.0
+p = 0.1

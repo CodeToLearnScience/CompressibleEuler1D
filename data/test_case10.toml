@@ -1,0 +1,52 @@
+# Toro test case 10 (two discontinuities problem)
+# Reference: IJNMF, 2014, DOI: 10.1002/fld.3903
+[simulation]
+equations = "euler_1d"
+test_name = "test_case10"
+
+[mesh]
+xmin = 0.0
+xmax = 1.0
+num_cells = 1000
+
+[time]
+cfl = 0.5
+final_time = 0.038
+time_integrator = "ssprk3"
+
+[numerics]
+order = 1
+limiter = "vanleer"
+flux = "llf"
+
+[eos]
+model = "ideal_gas"
+gamma = 1.4
+
+[boundary_conditions]
+left = "transmissive"
+right = "transmissive"
+
+[initial_condition]
+type = "piecewise_constant"
+
+[[initial_condition.region]]
+x_left = 0.0
+x_right = 0.1
+rho = 1.0
+u = 0.0
+p = 1000.0
+
+[[initial_condition.region]]
+x_left = 0.1
+x_right = 0.9
+rho = 1.0
+u = 0.0
+p = 0.01
+
+[[initial_condition.region]]
+x_left = 0.9
+x_right = 1.0
+rho = 1.0
+u = 0.0
+p = 100.0

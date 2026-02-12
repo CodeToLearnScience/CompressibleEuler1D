@@ -1,0 +1,47 @@
+# Shu and Osher test case (shock-entropy wave interaction)
+# Reference: JCP, 1989, 83, 32-78
+[simulation]
+equations = "euler_1d"
+test_name = "test_case12"
+
+[mesh]
+xmin = -5.0
+xmax = 5.0
+num_cells = 1000
+
+[time]
+cfl = 0.5
+final_time = 1.8
+time_integrator = "ssprk3"
+
+[numerics]
+order = 1
+limiter = "vanleer"
+flux = "llf"
+
+[eos]
+model = "ideal_gas"
+gamma = 1.4
+
+[boundary_conditions]
+left = "transmissive"
+right = "transmissive"
+
+[initial_condition]
+type = "shock_entropy_interaction"
+discontinuity_position = -4.0
+
+# Left state (constant shock)
+[initial_condition.left_state]
+rho = 3.857143
+u = 2.629369
+p = 10.33333
+
+# Right state (sinusoidal entropy wave)
+[initial_condition.right_state]
+rho_base = 1.0
+rho_amplitude = 0.2
+rho_frequency = 5.0
+rho_function = "linear"  # Uses 5*x (not pi)
+u = 0.0
+p = 1.0

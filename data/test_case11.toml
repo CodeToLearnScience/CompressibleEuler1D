@@ -1,0 +1,47 @@
+# Balsara and Shu test case (shock-entropy wave interaction)
+# Reference: JCP, 2000, 405-452, doi:10.1006/jcph.2000.6443
+[simulation]
+equations = "euler_1d"
+test_name = "test_case11"
+
+[mesh]
+xmin = -1.0
+xmax = 1.0
+num_cells = 1000
+
+[time]
+cfl = 0.5
+final_time = 0.47
+time_integrator = "ssprk3"
+
+[numerics]
+order = 1
+limiter = "vanleer"
+flux = "llf"
+
+[eos]
+model = "ideal_gas"
+gamma = 1.4
+
+[boundary_conditions]
+left = "transmissive"
+right = "transmissive"
+
+[initial_condition]
+type = "shock_entropy_interaction"
+discontinuity_position = -0.8
+
+# Left state (constant shock)
+[initial_condition.left_state]
+rho = 3.857143
+u = 2.629369
+p = 10.33333
+
+# Right state (sinusoidal entropy wave)
+[initial_condition.right_state]
+rho_base = 1.0
+rho_amplitude = 0.2
+rho_frequency = 5.0
+rho_function = "pi"  # Uses 5*pi*x
+u = 0.0
+p = 1.0

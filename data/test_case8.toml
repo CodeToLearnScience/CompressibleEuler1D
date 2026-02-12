@@ -1,0 +1,44 @@
+# Test case 8 (slowly moving shock problem)
+[simulation]
+equations = "euler_1d"
+test_name = "test_case8"
+
+[mesh]
+xmin = 0.0
+xmax = 1.0
+num_cells = 1000
+
+[time]
+cfl = 0.5
+final_time = 0.15
+time_integrator = "ssprk3"
+
+[numerics]
+order = 1
+limiter = "vanleer"
+flux = "llf"
+
+[eos]
+model = "ideal_gas"
+gamma = 1.4
+
+[boundary_conditions]
+left = "transmissive"
+right = "transmissive"
+
+[initial_condition]
+type = "piecewise_constant"
+
+[[initial_condition.region]]
+x_left = 0.0
+x_right = 0.5
+rho = 3.86
+u = -0.8099999999999999
+p = 10.330010799999998
+
+[[initial_condition.region]]
+x_left = 0.5
+x_right = 1.0
+rho = 1.0
+u = -3.44
+p = 2.0
