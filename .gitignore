@@ -46,7 +46,7 @@ build/
 #results 
 *.csv 
 *.vtk
-*.png
+results/
 
 #python 
 *.pyc

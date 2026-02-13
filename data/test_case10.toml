@@ -24,8 +24,8 @@ model = "ideal_gas"
 gamma = 1.4
 
 [boundary_conditions]
-left = "transmissive"
-right = "transmissive"
+left = "reflective"
+right = "reflective"
 
 [initial_condition]
 type = "piecewise_constant"
