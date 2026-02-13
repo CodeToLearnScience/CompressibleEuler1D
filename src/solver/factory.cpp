@@ -7,6 +7,7 @@
 
 namespace euler1d {
 
+/// Create EOS from config
 EosVariant create_eos(const EosConfig& config) {
     switch (config.model) {
         case EosModel::IdealGas:
@@ -15,6 +16,7 @@ EosVariant create_eos(const EosConfig& config) {
     return IdealGas{};
 }
 
+/// Create flux scheme from config
 FluxVariant create_flux(FluxScheme scheme) {
     switch (scheme) {
         case FluxScheme::LLF: return LLFFlux{};
@@ -25,6 +27,7 @@ FluxVariant create_flux(FluxScheme scheme) {
     return LLFFlux{};
 }
 
+/// Create limiter from config
 LimiterVariant create_limiter(Limiter lim) {
     switch (lim) {
         case Limiter::None: return NoLimiter{};
@@ -36,6 +39,7 @@ LimiterVariant create_limiter(Limiter lim) {
     return VanLeerLimiter{};
 }
 
+/// Create boundary condition from config
 BoundaryVariant create_boundary(BoundaryType type) {
     switch (type) {
         case BoundaryType::Transmissive: return TransmissiveBoundary{};
@@ -45,6 +49,7 @@ BoundaryVariant create_boundary(BoundaryType type) {
     return TransmissiveBoundary{};
 }
 
+/// Create time integrator from config
 TimeIntegratorVariant create_time_integrator(TimeIntegrator integ) {
     switch (integ) {
         case TimeIntegrator::ExplicitEuler: return ExplicitEuler{};
