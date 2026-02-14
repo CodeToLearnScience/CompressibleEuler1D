@@ -31,6 +31,7 @@ FluxScheme parse_flux_scheme(const std::string& str) {
     if (lower == "rusanov") return FluxScheme::Rusanov;
     if (lower == "hll") return FluxScheme::HLL;
     if (lower == "hllc") return FluxScheme::HLLC;
+    if (lower == "movers_le") return FluxScheme::MoversLE;
     throw ConfigError("Unknown flux scheme: " + str);
 }
 

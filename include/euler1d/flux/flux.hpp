@@ -187,11 +187,82 @@ struct HLLCFlux {
 };
 
 // =============================================================================
+// MOVERS Flux (Exact shock and contact wave speed estimates)
+// =============================================================================
+
+/**
+ * @brief MOVERS flux - exact shock and contact wave speed estimates
+ *
+ * Steady contacts and shocks are captured exactly 
+ */
+struct MoversLEFlux {
+    template <typename Eos>
+    [[nodiscard]] ConservativeVars operator()(
+        const ConservativeVars& U_L,
+        const ConservativeVars& U_R,
+        const Eos& eos) const noexcept {
+
+        // Compute physical fluxes
+        const auto F_L = eos.flux(U_L);
+        const auto F_R = eos.flux(U_R);
+
+        // Compute wave speeds
+        const Real u_L = U_L.rho_u / U_L.rho;
+        const Real u_R = U_R.rho_u / U_R.rho;
+        const Real c_L = eos.sound_speed(U_L);
+        const Real c_R = eos.sound_speed(U_R);
+
+        // Maximum Minimum wave speed
+        const auto lambda_max_min = max_min_eig_value(u_L, u_R, c_L, c_R);
+
+        // MoversLE flux (component-wise dissipation)
+        auto flux_component = [this, &lambda_max_min](Real flux_R, Real flux_L, Real U_R_var, Real U_L_var) {
+            const Real diss = compute_dissipation(flux_R, flux_L, U_R_var, U_L_var, lambda_max_min.first, lambda_max_min.second);
+            return Real{0.5} * (flux_L + flux_R) - Real{0.5} * diss * (U_R_var - U_L_var);
+        };
+
+        return {
+            flux_component(F_R.rho, F_L.rho, U_R.rho, U_L.rho),
+            flux_component(F_R.rho_u, F_L.rho_u, U_R.rho_u, U_L.rho_u),
+            flux_component(F_R.E, F_L.E, U_R.E, U_L.E)
+        };
+    }
+
+    auto max_min_eig_value(Real ul, Real ur, Real cl, Real cr) const noexcept {
+        const Real L1r = std::abs(ur + cr), L1l = std::abs(ul + cl);
+        const Real L2r = std::abs(ur),     L2l = std::abs(ul);
+        const Real L3r = std::abs(ur - cr), L3l = std::abs(ul - cl);
+        
+        auto max_eig_va = std::max({std::max({L1r, L2r, L3r}), std::max({L1l, L2l, L3l})});    
+        auto min_eig_val =  std::min({std::min({L1r, L2r, L3r}), std::min({L1l, L2l, L3l})});
+        return std::pair<Real, Real>{max_eig_va, min_eig_val};
+    }
+
+    auto compute_dissipation(Real Fr, Real Fl, Real Ur, Real Ul, Real L_max, Real L_min) const noexcept {
+        const Real epsilon = Real{1e-6};
+        Real S{0.0};
+        if (std::abs(Fr - Fl) < epsilon) return Real{0};
+        if (std::abs(Ur - Ul) < epsilon) return L_min;
+        
+        if (std::abs(Ur - Ul) > epsilon && std::abs(Fr - Fl) > epsilon) {
+            S = std::abs((Fr - Fl) / (Ur - Ul));
+        } else {
+            S = L_min;
+        }
+        
+        if (S < epsilon) return Real{0};
+        if (S >= L_max) return L_max;
+        if (S <= L_min) return L_min;
+        return S;
+    }
+};
+
+// =============================================================================
 // Flux Variant for runtime selection
 // =============================================================================
 
 /// Variant holding all supported numerical flux schemes
-using FluxVariant = std::variant<LLFFlux, RusanovFlux, HLLFlux, HLLCFlux>;
+using FluxVariant = std::variant<LLFFlux, RusanovFlux, HLLFlux, HLLCFlux, MoversLEFlux>;
 
 /// Compute numerical flux using any flux scheme
 template <typename Eos>

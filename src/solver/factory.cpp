@@ -23,6 +23,7 @@ FluxVariant create_flux(FluxScheme scheme) {
         case FluxScheme::Rusanov: return RusanovFlux{};
         case FluxScheme::HLL: return HLLFlux{};
         case FluxScheme::HLLC: return HLLCFlux{};
+        case FluxScheme::MoversLE: return MoversLEFlux{};
     }
     return LLFFlux{};
 }

@@ -24,7 +24,8 @@ enum class FluxScheme {
     LLF,      ///< Local Lax-Friedrichs
     Rusanov,  ///< Rusanov (identical to LLF for scalar max wavespeed)
     HLL,      ///< Harten-Lax-van Leer
-    HLLC      ///< HLL with Contact restoration
+    HLLC,     ///< HLL with Contact restoration
+    MoversLE  ///< MoversLE flux with adaptive dissipation
 };
 
 /// Available slope limiters for MUSCL reconstruction
